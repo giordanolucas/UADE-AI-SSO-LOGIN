@@ -15,7 +15,7 @@
 
 .heading>.major {
     margin-bottom: .25em;
-    font-family: PTSansBold,Helvetica,Arial,sans-serif;
+    font-family: Roboto,Helvetica,Arial,sans-serif;
     font-size: 2.5em;
     font-weight: bold;
     color:#eee;
@@ -81,7 +81,7 @@ table {
  * https://www.opensource.org/licenses/mit-license.php
  */
 body {
-    font: 13px/20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font: 13px/20px Roboto, Helvetica, Arial, sans-serif;
     color: #404040;
     background: #596778;
 }

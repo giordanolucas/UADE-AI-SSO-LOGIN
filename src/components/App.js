@@ -2,6 +2,7 @@ import React from "react";
 import {
     Route,
     Switch,
+    Redirect,
     BrowserRouter as Router
 } from "react-router-dom";
 import LoginPage from "./LoginPage";
@@ -16,13 +17,9 @@ function App() {
                     <Route path="/login" component={LoginPage}/>
                     <Route path="/logout" component={LogoutPage}/>
                     <Route path="/signup" component={SignUpPage}/>
+                    <Redirect to="/login"/>
                 </Switch>
             </Router>
-            <div>
-                <span>
-                    asd
-                </span>
-            </div>
         </div>
     );
 }

@@ -141,7 +141,7 @@ export function start() {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#2a2d33';
+        ctx.fillStyle = '#474a51';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fill();
 

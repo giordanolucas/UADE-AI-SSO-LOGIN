@@ -19,8 +19,11 @@ module.exports = {
       filename: "[name].[contenthash].css"
     }),
     new webpack.DefinePlugin({
-      "process.env.API_URL": JSON.stringify(
-        "https://uade-sso-users-api.herokuapp.com/api"
+      "process.env.SSO_URL": JSON.stringify(
+          "https://uade-sso-users-api.herokuapp.com/api"
+      ),
+      "process.env.MANAGEMENT_URL": JSON.stringify(
+          "https://uade-sso-users-api.herokuapp.com/apix"
       )
     }),
     new HtmlWebpackPlugin({

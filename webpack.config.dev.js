@@ -24,8 +24,11 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env.API_URL": JSON.stringify(
-        "https://uade-sso-users-api.herokuapp.com/api"
+      "process.env.SSO_URL": JSON.stringify(
+          "https://uade-sso-users-api.herokuapp.com/api"
+      ),
+      "process.env.MANAGEMENT_URL": JSON.stringify(
+          "https://uade-sso-users-api.herokuapp.com/apix"
       ),
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
     }),
