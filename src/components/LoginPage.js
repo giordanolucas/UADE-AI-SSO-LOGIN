@@ -1,15 +1,17 @@
 import React from "react";
-import {startCanvas} from "../utils/supercanvas"
 import {getInputValue, parseQuery} from "../utils/Functions";
 import axios from 'axios';
 import {MANAGEMENT_URL, SSO_URL} from "../api/ApiConfig";
+import lscache from "lscache";
+import jwtDecode from "jwt-decode";
 
-const DEFAULT_STATE = {email: null, password: null, title: "Apps Interactivas SSO", createUsers: false, loggingIn: false};
+const DEFAULT_STATE = {email: null, password: null, title: "Apps Interactivas SSO", allowCreateUsers: false, loggingIn: false, logInError: false};
 
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = this.initializeFromQuery(DEFAULT_STATE);
+    lscache.setExpiryMilliseconds(1);
   }
 
   initializeFromQuery = (state) => {
@@ -17,23 +19,30 @@ class LoginPage extends React.Component {
     let tenant = query.tenant;
     let redirect = query.redirect;
 
+    if(!tenant || !redirect){
+      window.location.replace("error?error=La URL de login debe incluír tenant y redirect");
+    }
+
     return {...state, tenantId: tenant, redirectUri: redirect};
   };
 
   componentDidMount() {
-    startCanvas();
-
     axios.get(MANAGEMENT_URL + '/Public/loginSettings', this.getRequestConfig())
         .then(response => {
-          this.setState({...this.state, title: response.data.loginText, createUsers: !!response.data.allowPublicUsers });
+          this.setState({...this.state, title: response.data.loginText, allowCreateUsers: !!response.data.allowPublicUsers });
         })
         .catch(() => {
-          this.setState({...this.state, invalidTenant: true});
+          window.location.replace("error?error=No se pude recuperar la información del tenant: " + this.state.tenantId);
         });
+
+    let existingToken = lscache.get(this.state.tenantId);
+    if(existingToken){
+      this.handleTokenResponse(existingToken);
+    }
   }
 
-  disabled = () => {
-    return this.state.email != null && this.state.password != null;
+  blockLogin = () => {
+    return this.state.email == null || this.state.password == null || this.state.loggingIn;
   };
 
   getRequestConfig = () => {
@@ -46,18 +55,39 @@ class LoginPage extends React.Component {
   };
 
   login = () => {
+    if(this.blockLogin()){
+      console.log("Login blocked!");
+      return;
+    }
+
     let loginData = { email: this.state.email, password: this.state.password };
 
     this.setState({ ...this.state, loggingIn: true});
 
     axios.post(SSO_URL + '/login', loginData, this.getRequestConfig())
         .then(response => {
-          this.setState({...this.state, token: response.data.token, error: false, loggingIn: false });
-          window.location.replace(this.state.redirectUri + "#" + this.state.token);
+          this.setState({...this.state, logInError: false, loggingIn: false });
+          this.handleTokenResponse(response.data.token);
         })
         .catch(() => {
-          this.setState({...this.state, error: true, loggingIn: false});
+          this.setState({...this.state, logInError: true, loggingIn: false});
         });
+  };
+
+  handleTokenResponse = (encodedToken) => {
+    let jsonToken = jwtDecode(encodedToken);
+    let expireDate = 0;
+    if(jsonToken["exp"]){
+      expireDate = new Date(jsonToken["exp"] * 1000);
+    }
+
+    let expireTime = 0;
+    if(expireDate > 0){
+      expireTime = expireDate - new Date();
+    }
+
+    lscache.set(this.state.tenantId, encodedToken, expireTime);
+    window.location.replace(this.state.redirectUri + "#" + encodedToken);
   };
 
   handleChange = (event) => {
@@ -82,13 +112,13 @@ class LoginPage extends React.Component {
           <h1 className="major">{this.state.title}</h1>
         </hgroup>
 
-        <form className="sign-up" action="javascript:void(0);">
+        <form className="sign-up" action="javascript:0">
           <h1 className="sign-up-title">Ingresar</h1>
-          <input name="email" type="text" className="form-control mb-3 form-control-lg" placeholder="e-mail" autoFocus onChange={this.handleChange}/>
+          <input name="email" type="text" className="form-control mb-3 form-control-lg" placeholder="email" autoFocus onChange={this.handleChange}/>
           <input name="password" type="password" className="form-control mb-3 form-control-lg" placeholder="password" onChange={this.handleChange}/>
-          {this.state.error && <div className="mb-2"><span className="text-danger">Inicio de sesión incorrecto</span></div>}
+          {this.state.logInError && <div className="mb-2"><span className="text-danger">Inicio de sesión incorrecto</span></div>}
           <input type="submit" style={loginButtonStyle} value="Iniciar sesión" className={loginButtonClass} onClick={this.login}/>
-          <div className="mt-2">{this.state.createUsers && <a href="#">Registrarme</a>}</div>
+          <div className="mt-2">{this.state.allowCreateUsers && <a href="#">Registrarme</a>}</div>
         </form>
 
       </div>

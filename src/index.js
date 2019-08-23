@@ -5,6 +5,7 @@ import App from "./components/App";
 
 import "./styles/bootstrap-lumen.css";
 import "./styles/login.css";
+import "./styles/error.css";
 import "./styles/index.css";
 
 render(
