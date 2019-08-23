@@ -90,7 +90,7 @@ const square = {
     }
 };
 
-export function start() {
+export function startCanvas() {
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext('2d');
     const spotZone = {x: 0, y: 0, w: 0, h: 0};

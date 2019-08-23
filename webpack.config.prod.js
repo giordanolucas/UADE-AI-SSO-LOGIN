@@ -23,7 +23,7 @@ module.exports = {
           "https://uade-sso-users-api.herokuapp.com/api"
       ),
       "process.env.MANAGEMENT_URL": JSON.stringify(
-          "https://uade-sso-users-api.herokuapp.com/apix"
+          "https://uade-sso-management-api.herokuapp.com/api"
       )
     }),
     new HtmlWebpackPlugin({

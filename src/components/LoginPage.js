@@ -1,28 +1,35 @@
 import React from "react";
-import {start} from "../utils/supercanvas"
+import {startCanvas} from "../utils/supercanvas"
 import {getInputValue, parseQuery} from "../utils/Functions";
 import axios from 'axios';
-import {SSO_URL} from "../api/ApiConfig";
+import {MANAGEMENT_URL, SSO_URL} from "../api/ApiConfig";
 
-const DEFAULT_STATE = {email: null, password: null};
+const DEFAULT_STATE = {email: null, password: null, title: "Apps Interactivas SSO", createUsers: false, loggingIn: false};
 
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = DEFAULT_STATE;
+    this.state = this.initializeFromQuery(DEFAULT_STATE);
   }
 
-  componentDidMount() {
-    start();
+  initializeFromQuery = (state) => {
     let query = parseQuery(this.props.location.search);
     let tenant = query.tenant;
     let redirect = query.redirect;
 
-    if(!tenant || !redirect){
-      alert("tenant and redirect query params must be present");
-    }
+    return {...state, tenantId: tenant, redirectUri: redirect};
+  };
 
-    this.setState({...this.state, tenantId: tenant, redirectUri: redirect});
+  componentDidMount() {
+    startCanvas();
+
+    axios.get(MANAGEMENT_URL + '/Public/loginSettings', this.getRequestConfig())
+        .then(response => {
+          this.setState({...this.state, title: response.data.loginText, createUsers: !!response.data.allowPublicUsers });
+        })
+        .catch(() => {
+          this.setState({...this.state, invalidTenant: true});
+        });
   }
 
   disabled = () => {
@@ -40,15 +47,16 @@ class LoginPage extends React.Component {
 
   login = () => {
     let loginData = { email: this.state.email, password: this.state.password };
-    let requestConfig = this.getRequestConfig();
 
-    axios.post(SSO_URL + '/login', loginData, requestConfig)
+    this.setState({ ...this.state, loggingIn: true});
+
+    axios.post(SSO_URL + '/login', loginData, this.getRequestConfig())
         .then(response => {
-          this.setState({...this.state, token: response.data.token, error: false });
+          this.setState({...this.state, token: response.data.token, error: false, loggingIn: false });
           window.location.replace(this.state.redirectUri + "#" + this.state.token);
         })
         .catch(() => {
-          this.setState({...this.state, error: true});
+          this.setState({...this.state, error: true, loggingIn: false});
         });
   };
 
@@ -60,21 +68,29 @@ class LoginPage extends React.Component {
   };
 
   render() {
+
+    let loginButtonClass = "btn btn-primary btn-lg " +
+        (this.state.loggingIn ? "progress-bar progress-bar-striped progress-bar-animated" : "");
+
+    let loginButtonStyle = { width: '100%' };
+
     return(
     <div>
       <canvas/>
       <div className="login-wrapper">
         <hgroup className="heading">
-          <h1 className="major">[tenant text]</h1>
+          <h1 className="major">{this.state.title}</h1>
         </hgroup>
 
-        <div className="sign-up">
+        <form className="sign-up" action="javascript:void(0);">
           <h1 className="sign-up-title">Ingresar</h1>
-          {this.state.error && <div>ERROR INICIANDO SESION</div>}
-          <input name="email" type="text" className="sign-up-input" placeholder="e-mail" autoFocus onChange={this.handleChange}/>
-          <input name="password" type="password" className="sign-up-input" placeholder="password" onChange={this.handleChange}/>
-          <input type="submit" value="Iniciar sesión" className="sign-up-button" onClick={this.login}/>
-        </div>
+          <input name="email" type="text" className="form-control mb-3 form-control-lg" placeholder="e-mail" autoFocus onChange={this.handleChange}/>
+          <input name="password" type="password" className="form-control mb-3 form-control-lg" placeholder="password" onChange={this.handleChange}/>
+          {this.state.error && <div className="mb-2"><span className="text-danger">Inicio de sesión incorrecto</span></div>}
+          <input type="submit" style={loginButtonStyle} value="Iniciar sesión" className={loginButtonClass} onClick={this.login}/>
+          <div className="mt-2">{this.state.createUsers && <a href="#">Registrarme</a>}</div>
+        </form>
+
       </div>
     </div>
     )
