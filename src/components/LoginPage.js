@@ -90,7 +90,7 @@ class LoginPage extends React.Component {
     window.location.replace(this.state.redirectUri + "#" + encodedToken);
   };
 
-  handleChange = (event) => {
+  handleInputChange = (event) => {
     this.setState({
       ...this.state,
       [event.target.name]: getInputValue(event)
@@ -106,7 +106,6 @@ class LoginPage extends React.Component {
 
     return(
     <div>
-      <canvas/>
       <div className="login-wrapper">
         <hgroup className="heading">
           <h1 className="major">{this.state.title}</h1>
@@ -114,11 +113,11 @@ class LoginPage extends React.Component {
 
         <form className="sign-up" action="javascript:0">
           <h1 className="sign-up-title">Ingresar</h1>
-          <input name="email" type="text" className="form-control mb-3 form-control-lg" placeholder="email" autoFocus onChange={this.handleChange}/>
-          <input name="password" type="password" className="form-control mb-3 form-control-lg" placeholder="password" onChange={this.handleChange}/>
+          <input name="email" type="text" className="form-control mb-3 form-control-lg" placeholder="email" autoFocus onChange={this.handleInputChange}/>
+          <input name="password" type="password" className="form-control mb-3 form-control-lg" placeholder="password" onChange={this.handleInputChange}/>
           {this.state.logInError && <div className="mb-2"><span className="text-danger">Inicio de sesión incorrecto</span></div>}
           <input type="submit" style={loginButtonStyle} value="Iniciar sesión" className={loginButtonClass} onClick={this.login}/>
-          <div className="mt-2">{this.state.allowCreateUsers && <a href="#">Registrarme</a>}</div>
+          <div className="mt-2">{this.state.allowCreateUsers && <a href={"/signup?tenant=" + this.state.tenantId + "&redirect=" + this.state.redirectUri}>Registrarme</a>}</div>
         </form>
 
       </div>
