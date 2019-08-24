@@ -136,6 +136,7 @@ class SignUpPage extends React.Component {
               {this.state.invalidEmail && <div className="mb-2"><span className="text-danger">El email ingresado no es válido</span></div>}
               {this.state.passNotMatch && <div className="mb-2"><span className="text-danger">Los passwords deben coincidir</span></div>}
               <input type="submit" style={registerButtonStyle} value="Registrarme" className={registerButtonClass} onClick={this.signUp}/>
+              <div className="mt-2"><a href={"/login?tenant=" + this.state.tenantId + "&redirect=" + this.state.redirectUri}>Ya estoy registrado</a></div>
             </form>
 
           </div>
