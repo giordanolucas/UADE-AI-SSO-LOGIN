@@ -1,29 +1,20 @@
 import React from "react";
-import {getInputValue, parseQuery} from "../utils/Functions";
+import {
+  getInputValue,
+  initializeTenantAndRedirectFromQueryString,
+  parseQuery,
+  saveTokenAndRedirect
+} from "../utils/Functions";
 import axios from "axios";
 import {SSO_URL} from "../api/ApiConfig";
-import jwtDecode from "jwt-decode";
-import lscache from "lscache";
 
 const DEFAULT_STATE = {fullName: null, email: null, password: null, repeat: null, emptyFields: false, invalidEmail: false, passNotMatch: false, signUpError: false, signingUp: false };
 
 class SignUpPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.initializeFromQuery(DEFAULT_STATE);
+    this.state = initializeTenantAndRedirectFromQueryString(DEFAULT_STATE);
   }
-
-  initializeFromQuery = (state) => {
-    let query = parseQuery(this.props.location.search);
-    let tenant = query.tenant;
-    let redirect = query.redirect;
-
-    if(!tenant || !redirect){
-      window.location.replace("error?error=La URL de login debe incluír tenant y redirect");
-    }
-
-    return { ...state, tenantId: tenant, redirectUri: redirect};
-  };
 
   handleInputChange = (event) => {
     this.setState({
@@ -86,19 +77,7 @@ class SignUpPage extends React.Component {
   };
 
   handleTokenResponse = (encodedToken) => {
-    let jsonToken = jwtDecode(encodedToken);
-    let expireDate = 0;
-    if(jsonToken["exp"]){
-      expireDate = new Date(jsonToken["exp"] * 1000);
-    }
-
-    let expireTime = 0;
-    if(expireDate > 0){
-      expireTime = expireDate - new Date();
-    }
-
-    lscache.set(this.state.tenantId, encodedToken, expireTime);
-    window.location.replace(this.state.redirectUri + "#" + encodedToken);
+    saveTokenAndRedirect(encodedToken, this.state.tenantId, this.state.redirectUri);
   };
 
   validateEmail = (email) => {
