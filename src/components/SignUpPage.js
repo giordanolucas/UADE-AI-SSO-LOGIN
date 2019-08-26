@@ -2,7 +2,6 @@ import React from "react";
 import {
   getInputValue,
   initializeTenantAndRedirectFromQueryString,
-  parseQuery,
   saveTokenAndRedirect
 } from "../utils/Functions";
 import axios from "axios";
@@ -26,7 +25,7 @@ class SignUpPage extends React.Component {
   validateSignUp = () => {
     let stateChange = {emptyFields: false, invalidEmail: false, passNotMatch: false };
 
-    if(this.isEmpty(this.state.email) || this.isEmpty(this.state.password) || this.isEmpty(this.state.repeat) || this.isEmpty(this.state.fullName)){
+    if(!this.state.email || !this.state.password || !this.state.repeat || !this.state.fullName){
       stateChange.emptyFields = true;
     }
 
@@ -73,7 +72,6 @@ class SignUpPage extends React.Component {
         .catch(() => {
           this.setState({...this.state, signUpError: true, signingUp: false});
         });
-
   };
 
   handleTokenResponse = (encodedToken) => {
@@ -83,10 +81,6 @@ class SignUpPage extends React.Component {
   validateEmail = (email) => {
     let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
-  };
-
-  isEmpty = (string) => {
-    return !string;
   };
 
   render() {

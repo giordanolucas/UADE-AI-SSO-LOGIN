@@ -29,7 +29,7 @@ class LoginPage extends React.Component {
   }
 
   blockLogin = () => {
-    return this.state.email == null || this.state.password == null || this.state.loggingIn;
+    return !this.state.email || !this.state.password || this.state.loggingIn;
   };
 
   getRequestConfig = () => {
