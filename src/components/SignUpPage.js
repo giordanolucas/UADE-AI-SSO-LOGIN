@@ -52,7 +52,7 @@ class SignUpPage extends React.Component {
   };
 
   signUp = () => {
-    if(!this.validateSignUp()){
+    if(!this.validateSignUp() || this.state.signingUp){
       return;
     }
 
