@@ -2,7 +2,8 @@ import lscache from "lscache";
 import jwtDecode from "jwt-decode";
 
 const BASE_SSO_URL = "https://uade-sso-login.herokuapp.com";
-const LOCALSTORAGE_USER_KEY = "user";
+const LOCALSTORAGE_USER_KEY = "sso_user";
+const LOCALSTORAGE_TOKEN_KEY = "sso_token";
 
 function _getLoginUrl(tenantId, redirectUri){
     return BASE_SSO_URL + "/login?tenant=" + tenantId + "&redirect=" + redirectUri;
@@ -26,6 +27,7 @@ function _saveUserToken(encodedToken){
     }
 
     lscache.set(LOCALSTORAGE_USER_KEY, jsonToken, expireTime);
+    lscache.set(LOCALSTORAGE_TOKEN_KEY, encodedToken, expireTime);
 }
 
 export function login(tenantId, callbackUrl){
@@ -36,7 +38,11 @@ export function saveUserToken(){
     _saveUserToken(window.location.hash.substring(1));
 }
 
-export function getUserToken(){
+export function getEncodedToken(){
+    return lscache.get(LOCALSTORAGE_TOKEN_KEY);
+}
+
+export function getTokenData(){
     return lscache.get(LOCALSTORAGE_USER_KEY);
 }
 
