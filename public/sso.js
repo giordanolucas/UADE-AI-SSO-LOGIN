@@ -526,15 +526,22 @@ SSOAuth.prototype.saveUserToken = function() {
   _saveUserToken(window.location.hash.substring(1));
 };
 
-SSOAuth.prototype.getEncodedToken = function() {
+SSOAuth.prototype.getJWT = function() {
   return lscache.get(LOCALSTORAGE_TOKEN_KEY);
 };
 
-SSOAuth.prototype.getTokenData = function() {
+SSOAuth.prototype.getJWTData = function() {
   return lscache.get(LOCALSTORAGE_USER_KEY);
 };
 
+SSOAuth.prototype.getUserId = function() {
+  var jwtData = this.getJWTData();
+  return jwtData.sub;
+};
+
 SSOAuth.prototype.logout = function() {
+  lscache.remove(LOCALSTORAGE_USER_KEY);
+  lscache.remove(LOCALSTORAGE_TOKEN_KEY);
   window.location.replace(
     _getLogoutUrl(this.info.tenantId, this.info.logoutCallback)
   );
