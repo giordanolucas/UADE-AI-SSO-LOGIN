@@ -1,5 +1,5 @@
-import lscache from "lscache";
-import jwtDecode from "jwt-decode";
+var lscache = require('./lib/lscache');
+var jwtDecode = require('./lib/jwt_decode');
 
 const BASE_SSO_URL = "https://uade-sso-login.herokuapp.com";
 const LOCALSTORAGE_USER_KEY = "sso_user";
