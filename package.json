@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild": "webpack -p --config webpack.config.prod.js",
+    "heroku-postbuild": "webpack-dev-server --open --config webpack.config.prod.js",
     "start-dev": "webpack-dev-server --open --config webpack.config.dev.js --port 8081"
   },
   "dependencies": {
