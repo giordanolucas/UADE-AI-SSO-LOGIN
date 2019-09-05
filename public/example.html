@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <script src="https://uade-sso-login.herokuapp.com/public/sso.min.js"></script>
+
+    <script type="text/javascript">
+        SSO = new SSOAuth({
+            tenantId: "fe24bbf3-05be-4aee-b4e6-8842f837d6cc",
+            loginCallback: "http://localhost:8081/public/callback.html",
+            logoutCallback: "http://localhost:8081/public/example.html",
+        });
+
+        StorageFunctions.SSO.saveUserToken();
+
+        function login() {
+            SSO.login();
+        }
+
+        function logout() {
+            SSO.logout();
+        }
+
+    </script>
+</head>
+
+<body>
+    </br>
+    <button onclick="login()">Login</button>
+    </br>
+    </br>
+    <button onclick="logout()">Logout</button>
+    </br>
+    </br>
+</body>
+
+</html>
