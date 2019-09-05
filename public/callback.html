@@ -1,34 +1,47 @@
 <html>
 
 <head>
+    <!-- Lib js del SSO -->
     <script src="https://uade-sso-login.herokuapp.com/public/sso.min.js"></script>
 
     <script type="text/javascript">
+
+        // Init de la lib js con los datos del tenant
         SSO = new SSOAuth({
             tenantId: "fe24bbf3-05be-4aee-b4e6-8842f837d6cc",
             loginCallback: "https://uade-sso-login.herokuapp.com/public/callback.html",
             logoutCallback: "https://uade-sso-login.herokuapp.com/public/example.html",
         });
 
+        // LEER!
+        // Importante llamar a esta funcion en la URL que se usa como `loginCallback`
+        // Esta funcion obtiene el JWT desde la url y la guarda en el storage.
         SSO.saveUserToken();
 
         function login() {
+            // Muestra el login generico del SSO.
             SSO.login();
         }
 
         function logout() {
+            // Borra del storage las credenciales del usuario
+            // Redirige al /logout
+            // Redirige al logoutCallback 
             SSO.logout();
         }
 
         function showJWT() {
+            // Muestra el JWT del usuario que se guardo en el storage
             alert(SSO.getJWT());
         }
 
         function showUserId() {
+            // Muestra el user-id del JWT que se guardo en el storage
             alert(SSO.getUserId());
         }
 
         function showJWTData() {
+            // Muestra el JWT que se guardo en el storage en formato JSON
             alert(JSON.stringify(SSO.getJWTData()));
         }
     </script>

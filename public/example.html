@@ -1,16 +1,17 @@
 <html>
 
 <head>
+    <!-- Lib js del SSO -->
     <script src="https://uade-sso-login.herokuapp.com/public/sso.min.js"></script>
 
     <script type="text/javascript">
+
+        // Init de la lib js con los datos del tenant
         SSO = new SSOAuth({
             tenantId: "fe24bbf3-05be-4aee-b4e6-8842f837d6cc",
-            loginCallback: "http://localhost:8081/public/callback.html",
-            logoutCallback: "http://localhost:8081/public/example.html",
+            loginCallback: "https://uade-sso-login.herokuapp.com/public/callback.html",
+            logoutCallback: "https://uade-sso-login.herokuapp.com/public/example.html",
         });
-
-        StorageFunctions.SSO.saveUserToken();
 
         function login() {
             SSO.login();
