@@ -10,6 +10,8 @@ import LogoutPage from "./LogoutPage";
 import SignUpPage from "./SignUpPage";
 import ErrorPage from "./ErrorPage";
 import {startCanvas} from "../utils/supercanvas";
+import ForgotPasswordPage from "./ForgotPasswordPage";
+import MessagePage from "./MessagePage";
 
 class App extends React.Component {
 
@@ -26,6 +28,8 @@ class App extends React.Component {
                         <Route path="/logout" component={LogoutPage}/>
                         <Route path="/signup" component={SignUpPage}/>
                         <Route path="/error" component={ErrorPage}/>
+                        <Route path="/forgot-password" component={ForgotPasswordPage}/>
+                        <Route path="/message" component={MessagePage}/>
                         <Redirect to="/login"/>
                     </Switch>
                 </Router>

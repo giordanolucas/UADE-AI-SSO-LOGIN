@@ -92,6 +92,7 @@ class LoginPage extends React.Component {
           <input name="password" type="password" className="form-control mb-3 form-control-lg" placeholder="password" onChange={this.handleInputChange}/>
           {this.state.logInError && <div className="mb-2"><span className="text-danger">Inicio de sesión incorrecto</span></div>}
           <input type="submit" style={loginButtonStyle} value="Iniciar sesión" className={loginButtonClass} onClick={this.login}/>
+          <div className="mt-2"><a href={"/forgot-password?tenant=" + this.state.tenantId + "&redirect=" + this.state.redirectUri}>Olvidé mi contraseña</a></div>
           <div className="mt-2">{this.state.allowCreateUsers && <a href={"/signup?tenant=" + this.state.tenantId + "&redirect=" + this.state.redirectUri}>Registrarme</a>}</div>
         </form>
 
